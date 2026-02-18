@@ -1,7 +1,5 @@
 ; ============================================
 ; CALCULADORA EN LENGUAJE ENSAMBLADOR
-; Organización y Arquitectura del Computador
-; UNMSM - 2025
 ; ============================================
 
 section .data
@@ -15,18 +13,18 @@ section .data
     titulo db 27, "[1;36m", 10
            db "  ╔════════════════════════════════════════════════╗", 10
            db "  ║                                                ║", 10
-           db "  ║      CALCULADORA EN LENGUAJE ENSAMBLADOR      ║", 10
+           db "  ║      CALCULADORA EN LENGUAJE ENSAMBLADOR       ║", 10
            db "  ║                                                ║", 10
            db "  ╚════════════════════════════════════════════════╝", 10
            db 27, "[0m", 10, 0
     
     curso db "  Organización y Arquitectura del Computador", 10
-          db "  Universidad Nacional Mayor de San Marcos", 10, 10, 0
+          db "  UUniversidad Nacional de San Antonio Abab del Cusco", 10, 10, 0
     
     integrantes db "  Integrantes:", 10
-                db "     - [Nombre Apellido 1]", 10
-                db "     - [Nombre Apellido 2]", 10
-                db "     - [Nombre Apellido 3]", 10, 10, 0
+                db "     - [Huaman Tairo, Emmi Daniela]", 10
+                db "     - [Quentasi Juachin, Jose Francisco]", 10
+                db "     - [Vitorino Marin, Efrain]", 10, 10, 0
     
     presione db "  Presione ENTER para continuar...", 0
     
