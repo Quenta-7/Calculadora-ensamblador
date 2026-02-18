@@ -1,0 +1,13 @@
+# Archivos compilados
+*.o
+*.out
+calculadora
+build/*.o
+
+# Archivos temporales
+*~
+*.swp
+.vscode/settings.json
+
+# Sistema
+.DS_Store
