@@ -17,20 +17,20 @@ section .data
     
     ; === CARÁTULA ===
     titulo db 27, "[1;36m", 10
-           db "  ╔════════════════════════════════════════════════╗", 10
-           db "  ║                                                ║", 10
-           db "  ║      CALCULADORA EN LENGUAJE ENSAMBLADOR      ║", 10
-           db "  ║                                                ║", 10
-           db "  ╚════════════════════════════════════════════════╝", 10
+           db "  **************************************************", 10
+           db "  *                                                *", 10
+           db "  *      CALCULADORA EN LENGUAJE ENSAMBLADOR       *", 10
+           db "  *                                                *", 10
+           db "  **************************************************", 10
            db 27, "[0m", 10, 0
     
     curso db "  Organización y Arquitectura del Computador", 10
-          db "  Universidad Nacional Mayor de San Marcos", 10, 10, 0
+          db "  Universidad Nacional de San Antonio Abad del CUsco", 10, 10, 0
     
-    integrantes db "  👥 Integrantes:", 10
-                db "     - José [Apellido]    (Módulo Aritmético)", 10
-                db "     - Efraín [Apellido]  (Módulo Lógico)", 10
-                db "     - Emmi [Apellido]    (Módulo Conversión)", 10, 10, 0
+    integrantes db "  Integrantes:", 10
+                db "     - Huaman Tairo, Emmi Daniela ", 10
+                db "     - Quentasi Juachin, Jose Francisco", 10
+                db "     - Vitorino Marin, Efrain", 10, 10, 0
     
     presione db "  Presione ENTER para continuar...", 0
     
