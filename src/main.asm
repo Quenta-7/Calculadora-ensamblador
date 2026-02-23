@@ -2,14 +2,6 @@
 ; CALCULADORA EN LENGUAJE ENSAMBLADOR
 ; Programa Principal
 ; ============================================
-; Organización y Arquitectura del Computador
-; UNMSM - 2025
-; 
-; Integrantes:
-;   - José [Apellido]    - Módulo Aritmético
-;   - Efraín [Apellido]  - Módulo Lógico
-;   - Emmi [Apellido]    - Módulo Conversión
-; ============================================
 
 section .data
     ; === CÓDIGOS ANSI PARA COLORES ===
