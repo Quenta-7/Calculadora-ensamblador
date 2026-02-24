@@ -5,6 +5,7 @@
 
 section .data
     newline db 10, 0
+    msgPausar db 10, "  Presione ENTER para continuar...", 0
 
 section .bss
     extern buffer
@@ -87,6 +88,11 @@ pausar:
     push rbp
     mov rbp, rsp
     
+    ; Mostrar mensaje
+    mov rsi, msgPausar
+    call print_string
+    
+    ; Esperar ENTER
     mov rax, 0
     mov rdi, 0
     mov rsi, buffer

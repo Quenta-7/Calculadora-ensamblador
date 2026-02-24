@@ -9,11 +9,15 @@
 
 section .data
     ; === SUBMENÚ CONVERSIÓN ===
-    menu_conv db 10, 27, "[1;33m", "  === OPERACIONES DE CONVERSIÓN ===", 27, "[0m", 10
-              db "  1. Binario (8 bits) a Hexadecimal", 10
-              db "  2. Hexadecimal (2 dígitos) a Binario", 10
-              db "  3. Volver al menú principal", 10
-              db "  Opción: ", 0
+    menu_conv db 10, 27, "[1;33m"
+              db "      ┌──────────────────────────────┐", 10
+              db "      │   OPERACIONES DE CONVERSION  │", 10
+              db "      └──────────────────────────────┘", 10
+              db 27, "[0m"
+              db "       ", 27, "[1;37m", "1.", 27, "[0m", " Binario (8 bits) a Hexadecimal", 10
+              db "       ", 27, "[1;37m", "2.", 27, "[0m", " Hexadecimal (2 digitos) a Binario", 10
+              db "       ", 27, "[1;31m", "3.", 27, "[0m", " Volver al menu principal", 10, 10
+              db "      Opcion: ", 0
     
     ; === MENSAJES ===
     msg_input_bin8 db 10, "  Ingrese número binario (8 bits): ", 0
@@ -160,9 +164,12 @@ operacion_hex_to_bin:
     cmp rax, -1
     je .error
     
+    push rax                    ; Guardar el valor hex antes de print_string
+    
     mov rsi, msg_resultado_bin8
     call print_string
     
+    pop rax                     ; Restaurar el valor hex
     movzx rax, al
     call print_binary_8bits
     
@@ -260,16 +267,13 @@ hex_to_num:
     je .check_count
     
     ; Convertir dígito hex
-    push rax
+    shl rax, 4
     call hex_char_to_value
-    pop rdx
     
-    cmp rax, -1
+    cmp rcx, -1
     je .error
     
-    shl rdx, 4
-    or rdx, rcx
-    mov rax, rdx
+    or rax, rcx
     
     inc rbx
     cmp rbx, 2

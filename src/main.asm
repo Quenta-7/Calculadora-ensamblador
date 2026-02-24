@@ -83,18 +83,16 @@ section .bss
 
 section .text
     global _start
+    
+    ; Declarar funciones externas de otros módulos
+    extern menu_aritmetico        ; De arithmetic.asm
+    extern menuLogicoMain         ; De logical.asm
+    extern menu_conversion        ; De conversion.asm
+    extern print_string           ; De utils.asm
+    extern strlen                 ; De utils.asm
+    extern leer_opcion           ; De utils.asm
+    extern pausar                ; De utils.asm
 
-    extern menu_aritmetico
-    extern menu_logico_main
-    extern menu_conversion
-    extern print_string
-    extern leer_opcion
-    extern pausar
-
-
-; ============================================
-; INICIO
-; ============================================
 _start:
     call limpiar_pantalla
     call mostrar_caratula
@@ -119,9 +117,6 @@ limpiar_pantalla:
 ; ============================================
 mostrar_caratula:
     mov rsi,caratula
-    call print_string
-
-    mov rsi,presione
     call print_string
     ret
 
@@ -148,7 +143,7 @@ menu_principal_loop:
     je .aritmetica
 
     cmp al,'2'
-    je .logica
+    je .opcion_logica
 
     cmp al,'3'
     je .conversion
@@ -166,8 +161,8 @@ menu_principal_loop:
     call menu_aritmetico
     jmp .loop
 
-.logica:
-    call menu_logico_main
+.opcion_logica:
+    call menuLogicoMain        ; Llamar módulo externo
     jmp .loop
 
 .conversion:
