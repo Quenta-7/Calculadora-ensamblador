@@ -227,10 +227,13 @@ operacion_division:
     xor rdx, rdx            ; Limpiar RDX antes de dividir
     div rcx                 ; RAX=cociente, RDX=residuo
     
+    push rax                ; Guardar cociente
     push rdx                ; Guardar residuo
     
     mov rsi, msg_cociente
     call print_string
+    
+    pop rax                 ; Recuperar cociente
     call print_number       ; Imprime cociente
     
     mov rsi, newline
