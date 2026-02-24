@@ -86,7 +86,7 @@ section .text
     
     ; Declarar funciones externas de otros módulos
     extern menu_aritmetico        ; De arithmetic.asm
-    extern menu_logico_main       ; De logical.asm
+    extern menuLogicoMain         ; De logical.asm
     extern menu_conversion        ; De conversion.asm
     extern print_string           ; De utils.asm
     extern strlen                 ; De utils.asm
@@ -146,7 +146,7 @@ menu_principal_loop:
     je .aritmetica
 
     cmp al,'2'
-    je .logica
+    je .opcion_logica
 
     cmp al,'3'
     je .conversion
@@ -165,7 +165,7 @@ menu_principal_loop:
     jmp .loop
 
 .opcion_logica:
-    call menu_logico_main      ; Llamar módulo externo
+    call menuLogicoMain        ; Llamar módulo externo
     jmp .loop
 
 .conversion:

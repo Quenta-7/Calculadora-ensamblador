@@ -164,9 +164,12 @@ operacion_hex_to_bin:
     cmp rax, -1
     je .error
     
+    push rax                    ; Guardar el valor hex antes de print_string
+    
     mov rsi, msg_resultado_bin8
     call print_string
     
+    pop rax                     ; Restaurar el valor hex
     movzx rax, al
     call print_binary_8bits
     
@@ -264,16 +267,13 @@ hex_to_num:
     je .check_count
     
     ; Convertir dígito hex
-    push rax
+    shl rax, 4
     call hex_char_to_value
-    pop rdx
     
-    cmp rax, -1
+    cmp rcx, -1
     je .error
     
-    shl rdx, 4
-    or rdx, rcx
-    mov rax, rdx
+    or rax, rcx
     
     inc rbx
     cmp rbx, 2
