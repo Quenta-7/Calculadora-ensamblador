@@ -118,9 +118,6 @@ limpiar_pantalla:
 mostrar_caratula:
     mov rsi,caratula
     call print_string
-
-    mov rsi,presione
-    call print_string
     ret
 
 
