@@ -10,30 +10,44 @@
 
 section .data
     ; === SUBMENÚ LÓGICO ===
-    menu_logico db 10, 27, "[1;33m", "  === OPERACIONES LÓGICAS ===", 27, "[0m", 10
-                db "  1. AND", 10
-                db "  2. OR", 10
-                db "  3. NOT", 10
-                db "  4. Volver al menú principal", 10
-                db "  Opción: ", 0
+    menuLogico db 10, 27, "[1;33m"
+                db "      ┌──────────────────────────────┐", 10
+                db "      │     OPERACIONES LOGICAS     │", 10
+                db "      └──────────────────────────────┘", 10
+                db 27, "[0m"
+                db "       ", 27, "[1;37m", "1.", 27, "[0m", " AND", 10
+                db "       ", 27, "[1;37m", "2.", 27, "[0m", " OR", 10
+                db "       ", 27, "[1;37m", "3.", 27, "[0m", " NOT", 10
+                db "       ", 27, "[1;37m", "4.", 27, "[0m", " XOR", 10
+                db "       ", 27, "[1;31m", "5.", 27, "[0m", " Volver al menu principal", 10, 10
+                db "      Opcion: ", 0
     
     ; === MENSAJES ===
-    msg_bin1 db 10, "  Ingrese primer número binario (4 bits): ", 0
-    msg_bin2 db "  Ingrese segundo número binario (4 bits): ", 0
-    msg_bin_not db 10, "  Ingrese número binario (4 bits): ", 0
-    msg_resultado_bin db "  Resultado: ", 0
-    msg_bin_invalido db 10, "  ❌ ERROR: Use solo 0 y 1, exactamente 4 dígitos.", 10, 0
-    msg_opcion_invalida db 10, "  ❌ Opción inválida.", 10, 0
+    msgBin1 db 10, "  Ingrese primer número binario (4 bits): ", 0
+    msgBin2 db "  Ingrese segundo número binario (4 bits): ", 0
+    msgBinNot db 10, "  Ingrese número binario (4 bits): ", 0
+    msgResultadoBin db "  Resultado: ", 0
+    msgBinInvalido db 10, "  ❌ ERROR: Use solo 0 y 1, exactamente 4 dígitos.", 10, 0
+    msgOpcionInvalida db 10, "  ❌ Opción inválida.", 10, 0
     newline db 10, 0
-    clear_scr db 27, "[2J", 27, "[H", 0
+    clearScr db 27, "[2J", 27, "[H", 0
+
+    ; === TÍTULOS DE OPERACIONES ===
+    tituloAnd db 10, 27, "[1;36m", "  --- Operación AND (4 bits) ---", 27, "[0m", 10, 0
+    tituloOr  db 10, 27, "[1;36m", "  --- Operación OR  (4 bits) ---", 27, "[0m", 10, 0
+    tituloNot db 10, 27, "[1;36m", "  --- Operación NOT (4 bits) ---", 27, "[0m", 10, 0
+    tituloXor db 10, 27, "[1;36m", "  --- Operación XOR (4 bits) ---", 27, "[0m", 10, 0
+    msgOp1 db "  Operando 1: ", 0
+    msgOp2 db "  Operando 2: ", 0
+    msgOpNot db "  Operando:   ", 0
 
 section .bss
-    bin_input resb 10
-    resultado_str resb 10
+    binInput resb 10
+    resultadoStr resb 10
     extern buffer
 
 section .text
-    global menu_logico_main
+    global menuLogicoMain
     
     ; Funciones externas
     extern print_string
@@ -43,7 +57,7 @@ section .text
 ; ============================================
 ; MENÚ LÓGICO PRINCIPAL
 ; ============================================
-menu_logico_main:
+menuLogicoMain:
     push rbp
     mov rbp, rsp
 
@@ -51,11 +65,11 @@ menu_logico_main:
     ; Limpiar pantalla
     mov rax, 1
     mov rdi, 1
-    mov rsi, clear_scr
+    mov rsi, clearScr
     mov rdx, 7
     syscall
     
-    mov rsi, menu_logico
+    mov rsi, menuLogico
     call print_string
     
     call leer_opcion
@@ -72,25 +86,33 @@ menu_logico_main:
     je .not_op
     
     cmp al, '4'
+    je .xor_op
+    
+    cmp al, '5'
     je .volver
     
-    mov rsi, msg_opcion_invalida
+    mov rsi, msgOpcionInvalida
     call print_string
     call pausar
     jmp .loop
 
 .and_op:
-    call operacion_and
+    call operacionAnd
     call pausar
     jmp .loop
 
 .or_op:
-    call operacion_or
+    call operacionOr
     call pausar
     jmp .loop
 
 .not_op:
-    call operacion_not
+    call operacionNot
+    call pausar
+    jmp .loop
+
+.xor_op:
+    call operacionXor
     call pausar
     jmp .loop
 
@@ -100,109 +122,256 @@ menu_logico_main:
 
 ; ============================================
 ; OPERACIÓN: AND
+; Ejemplo: 1010 AND 1100 = 1000
 ; ============================================
-operacion_and:
+operacionAnd:
     push rbp
     mov rbp, rsp
-    
-    call leer_dos_binarios
+    push rbx
+    push r12
+    push r13
+
+    ; Mostrar título
+    mov rsi, tituloAnd
+    call print_string
+
+    call leerDosBinarios
     cmp rax, 0
     je .error
-    
-    ; BL = num1, CL = num2
-    and bl, cl
-    
-    mov rsi, msg_resultado_bin
+
+    ; Guardar operandos originales
+    mov r12b, bl          ; r12b = operando 1
+    mov r13b, cl          ; r13b = operando 2
+
+    ; Mostrar operando 1
+    mov rsi, msgOp1
     call print_string
-    
-    movzx rax, bl
-    call print_binary_4bits
-    
+    movzx rax, r12b
+    call printBinary4bits
     mov rsi, newline
     call print_string
-    
+
+    ; Mostrar operando 2
+    mov rsi, msgOp2
+    call print_string
+    movzx rax, r13b
+    call printBinary4bits
+    mov rsi, newline
+    call print_string
+
+    ; Calcular AND
+    mov bl, r12b
+    and bl, r13b
+
+    ; Mostrar resultado
+    mov rsi, msgResultadoBin
+    call print_string
+    movzx rax, bl
+    call printBinary4bits
+    mov rsi, newline
+    call print_string
+
     jmp .fin
 
 .error:
-    mov rsi, msg_bin_invalido
+    mov rsi, msgBinInvalido
     call print_string
 
 .fin:
+    pop r13
+    pop r12
+    pop rbx
     pop rbp
     ret
 
 ; ============================================
 ; OPERACIÓN: OR
+; Ejemplo: 1010 OR 0101 = 1111
 ; ============================================
-operacion_or:
+operacionOr:
     push rbp
     mov rbp, rsp
-    
-    call leer_dos_binarios
+    push rbx
+    push r12
+    push r13
+
+    ; Mostrar título
+    mov rsi, tituloOr
+    call print_string
+
+    call leerDosBinarios
     cmp rax, 0
     je .error
-    
-    or bl, cl
-    
-    mov rsi, msg_resultado_bin
+
+    ; Guardar operandos originales
+    mov r12b, bl          ; r12b = operando 1
+    mov r13b, cl          ; r13b = operando 2
+
+    ; Mostrar operando 1
+    mov rsi, msgOp1
     call print_string
-    
-    movzx rax, bl
-    call print_binary_4bits
-    
+    movzx rax, r12b
+    call printBinary4bits
     mov rsi, newline
     call print_string
-    
+
+    ; Mostrar operando 2
+    mov rsi, msgOp2
+    call print_string
+    movzx rax, r13b
+    call printBinary4bits
+    mov rsi, newline
+    call print_string
+
+    ; Calcular OR
+    mov bl, r12b
+    or bl, r13b
+
+    ; Mostrar resultado
+    mov rsi, msgResultadoBin
+    call print_string
+    movzx rax, bl
+    call printBinary4bits
+    mov rsi, newline
+    call print_string
+
     jmp .fin
 
 .error:
-    mov rsi, msg_bin_invalido
+    mov rsi, msgBinInvalido
     call print_string
 
 .fin:
+    pop r13
+    pop r12
+    pop rbx
     pop rbp
     ret
 
 ; ============================================
 ; OPERACIÓN: NOT
+; Ejemplo: NOT 1010 = 0101
 ; ============================================
-operacion_not:
+operacionNot:
     push rbp
     mov rbp, rsp
-    
-    mov rsi, msg_bin_not
+    push rbx                ; Guardar RBX (callee-saved)
+
+    ; Mostrar título
+    mov rsi, tituloNot
     call print_string
-    
+
+    mov rsi, msgBinNot
+    call print_string
+
+    ; Leer entrada del usuario
     mov rax, 0
     mov rdi, 0
-    mov rsi, bin_input
+    mov rsi, binInput
     mov rdx, 6
     syscall
-    
-    mov rsi, bin_input
-    call binary_to_num_4bits
+
+    ; Convertir string binario a valor numérico
+    mov rsi, binInput
+    call binaryToNum4bits
     cmp rax, -1
     je .error
-    
-    not al
-    and al, 0x0F
-    
-    mov rsi, msg_resultado_bin
+
+    mov bl, al              ; BL = operando original
+
+    ; Mostrar operando
+    mov rsi, msgOpNot
     call print_string
-    
-    movzx rax, al
-    call print_binary_4bits
-    
+    movzx rax, bl
+    call printBinary4bits
     mov rsi, newline
     call print_string
-    
+
+    ; Calcular NOT (complemento a 1, solo 4 bits)
+    not bl
+    and bl, 0x0F            ; Enmascarar a 4 bits
+
+    ; Mostrar resultado
+    mov rsi, msgResultadoBin
+    call print_string
+    movzx rax, bl            ; Usar BL que está preservado
+    call printBinary4bits
+
+    mov rsi, newline
+    call print_string
+
     jmp .fin
 
 .error:
-    mov rsi, msg_bin_invalido
+    mov rsi, msgBinInvalido
     call print_string
 
 .fin:
+    pop rbx                  ; Restaurar RBX
+    pop rbp
+    ret
+
+; ============================================
+; OPERACIÓN: XOR
+; Ejemplo: 1010 XOR 1100 = 0110
+; ============================================
+operacionXor:
+    push rbp
+    mov rbp, rsp
+    push rbx
+    push r12
+    push r13
+
+    ; Mostrar título
+    mov rsi, tituloXor
+    call print_string
+
+    call leerDosBinarios
+    cmp rax, 0
+    je .error
+
+    ; Guardar operandos originales
+    mov r12b, bl          ; r12b = operando 1
+    mov r13b, cl          ; r13b = operando 2
+
+    ; Mostrar operando 1
+    mov rsi, msgOp1
+    call print_string
+    movzx rax, r12b
+    call printBinary4bits
+    mov rsi, newline
+    call print_string
+
+    ; Mostrar operando 2
+    mov rsi, msgOp2
+    call print_string
+    movzx rax, r13b
+    call printBinary4bits
+    mov rsi, newline
+    call print_string
+
+    ; Calcular XOR
+    mov bl, r12b
+    xor bl, r13b
+
+    ; Mostrar resultado
+    mov rsi, msgResultadoBin
+    call print_string
+    movzx rax, bl
+    call printBinary4bits
+    mov rsi, newline
+    call print_string
+
+    jmp .fin
+
+.error:
+    mov rsi, msgBinInvalido
+    call print_string
+
+.fin:
+    pop r13
+    pop r12
+    pop rbx
     pop rbp
     ret
 
@@ -210,38 +379,38 @@ operacion_not:
 ; FUNCIÓN: Leer dos números binarios
 ; Retorna: BL = num1, CL = num2, RAX = 1 si OK, 0 si error
 ; ============================================
-leer_dos_binarios:
+leerDosBinarios:
     push rbp
     mov rbp, rsp
     
     ; Leer primer binario
-    mov rsi, msg_bin1
+    mov rsi, msgBin1
     call print_string
     
     mov rax, 0
     mov rdi, 0
-    mov rsi, bin_input
+    mov rsi, binInput
     mov rdx, 6
     syscall
     
-    mov rsi, bin_input
-    call binary_to_num_4bits
+    mov rsi, binInput
+    call binaryToNum4bits
     cmp rax, -1
     je .error
     mov bl, al
     
     ; Leer segundo binario
-    mov rsi, msg_bin2
+    mov rsi, msgBin2
     call print_string
     
     mov rax, 0
     mov rdi, 0
-    mov rsi, bin_input
+    mov rsi, binInput
     mov rdx, 6
     syscall
     
-    mov rsi, bin_input
-    call binary_to_num_4bits
+    mov rsi, binInput
+    call binaryToNum4bits
     cmp rax, -1
     je .error
     mov cl, al
@@ -261,7 +430,7 @@ leer_dos_binarios:
 ; Entrada: RSI = string binario
 ; Salida: RAX = número (0-15) o -1 si error
 ; ============================================
-binary_to_num_4bits:
+binaryToNum4bits:
     push rbp
     mov rbp, rsp
     push rbx
@@ -317,7 +486,7 @@ binary_to_num_4bits:
 ; FUNCIÓN: Imprimir binario de 4 bits
 ; Entrada: RAX = número (0-15)
 ; ============================================
-print_binary_4bits:
+printBinary4bits:
     push rbp
     mov rbp, rsp
     push rbx
@@ -335,12 +504,12 @@ print_binary_4bits:
     and rax, 1
     
     add al, '0'
-    mov [resultado_str], al
-    mov byte [resultado_str + 1], 0
+    mov [resultadoStr], al
+    mov byte [resultadoStr + 1], 0
     
     push rcx
     push rbx
-    mov rsi, resultado_str
+    mov rsi, resultadoStr
     call print_string
     pop rbx
     pop rcx

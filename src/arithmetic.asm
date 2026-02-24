@@ -11,13 +11,17 @@
 
 section .data
     ; === SUBMENÚ ARITMÉTICO ===
-    menu_arit db 10, 27, "[1;33m", "  === OPERACIONES ARITMÉTICAS ===", 27, "[0m", 10
-              db "  1. Suma", 10
-              db "  2. Resta", 10
-              db "  3. Multiplicación", 10
-              db "  4. División", 10
-              db "  5. Volver al menú principal", 10
-              db "  Opción: ", 0
+    menu_arit db 10, 27, "[1;33m"
+              db "      ┌──────────────────────────────┐", 10
+              db "      │   OPERACIONES ARITMETICAS    │", 10
+              db "      └──────────────────────────────┘", 10
+              db 27, "[0m"
+              db "       ", 27, "[1;37m", "1.", 27, "[0m", " Suma", 10
+              db "       ", 27, "[1;37m", "2.", 27, "[0m", " Resta", 10
+              db "       ", 27, "[1;37m", "3.", 27, "[0m", " Multiplicacion", 10
+              db "       ", 27, "[1;37m", "4.", 27, "[0m", " Division", 10
+              db "       ", 27, "[1;31m", "5.", 27, "[0m", " Volver al menu principal", 10, 10
+              db "      Opcion: ", 0
     
     ; === MENSAJES ===
     msg_num1 db 10, "  Ingrese primer número (00-99): ", 0

@@ -17,42 +17,60 @@ section .data
     
     ; === CARÁTULA ===
     titulo db 27, "[1;36m", 10
-           db "  **************************************************", 10
-           db "  *                                                *", 10
-           db "  *      CALCULADORA EN LENGUAJE ENSAMBLADOR       *", 10
-           db "  *                                                *", 10
-           db "  **************************************************", 10
+           db "      _____________________________", 10
+           db "     |  ___________________________  |", 10
+           db "     | |                           | |", 10
+           db "     | |   CALCULADORA  ASM x86    | |", 10
+           db "     | |___________________________| |", 10
+           db "     |   ___ ___ ___ ___   ___ ___   |", 10
+           db "     |  | 7 | 8 | 9 | / | |AND| OR|  |", 10
+           db "     |  |___|___|___|___| |___|___|  |", 10
+           db "     |  | 4 | 5 | 6 | x | |NOT|XOR|  |", 10
+           db "     |  |___|___|___|___| |___|___|  |", 10
+           db "     |  | 1 | 2 | 3 | - | |BIN|HEX|  |", 10
+           db "     |  |___|___|___|___| |___|___|  |", 10
+           db "     |  | 0 | . | = | + | | ENTER |  |", 10
+           db "     |  |___|___|___|___| |_______|  |", 10
+           db "     |_____________________________|", 10
            db 27, "[0m", 10, 0
     
-    curso db "  Organización y Arquitectura del Computador", 10
-          db "  Universidad Nacional de San Antonio Abad del CUsco", 10, 10, 0
+    curso db 27, "[0;37m"
+          db "      Organizacion y Arquitectura del Computador", 10
+          db "      Universidad Nacional de San Antonio Abad del Cusco", 10
+          db 27, "[0m", 10, 0
     
-    integrantes db "  Integrantes:", 10
-                db "     - Huaman Tairo, Emmi Daniela ", 10
-                db "     - Quentasi Juachin, Jose Francisco", 10
-                db "     - Vitorino Marin, Efrain", 10, 10, 0
+    integrantes db 27, "[1;33m", "      Integrantes:", 27, "[0m", 10
+                db "        ", 27, "[0;36m", ">> ", 27, "[0m", "Huaman Tairo, Emmi Daniela", 10
+                db "        ", 27, "[0;36m", ">> ", 27, "[0m", "Quentasi Juachin, Jose Francisco", 10
+                db "        ", 27, "[0;36m", ">> ", 27, "[0m", "Vitorino Marin, Efrain", 10, 10, 0
     
     presione db "  Presione ENTER para continuar...", 0
     
     ; === MENÚ PRINCIPAL ===
     menu_titulo db 27, "[1;32m", 10
-                db "  ╔════════════════════════════════════╗", 10
-                db "  ║         MENÚ PRINCIPAL             ║", 10
-                db "  ╚════════════════════════════════════╝", 10
-                db 27, "[0m", 10, 0
+                db "      ╔══════════════════════════════════╗", 10
+                db "      ║       ", 27, "[1;37m", "MENU PRINCIPAL", 27, "[1;32m", "           ║", 10
+                db "      ╠══════════════════════════════════╣", 10
+                db 27, "[0m", 0
     
-    menu_opciones db "  1️⃣  Operaciones Aritméticas", 10
-                  db "  2️⃣  Operaciones Lógicas", 10
-                  db "  3️⃣  Operaciones de Conversión", 10
-                  db "  4️⃣  Salir", 10, 10
-                  db "  Seleccione opción [1-4]: ", 0
+    menu_opciones db 27, "[1;32m"
+                  db "      ║", 27, "[0m", "  ", 27, "[1;33m", "1.", 27, "[0m", " Operaciones Aritmeticas   ", 27, "[1;32m", "  ║", 10
+                  db "      ║", 27, "[0m", "  ", 27, "[1;33m", "2.", 27, "[0m", " Operaciones Logicas       ", 27, "[1;32m", "  ║", 10
+                  db "      ║", 27, "[0m", "  ", 27, "[1;33m", "3.", 27, "[0m", " Operaciones de Conversion ", 27, "[1;32m", "  ║", 10
+                  db "      ║", 27, "[0m", "  ", 27, "[1;31m", "4.", 27, "[0m", " Salir                     ", 27, "[1;32m", "  ║", 10
+                  db "      ╚══════════════════════════════════╝", 10
+                  db 27, "[0m", 10
+                  db "      Seleccione opcion [1-4]: ", 0
     
     ; === MENSAJES GENERALES ===
-    msg_opcion_invalida db 10, "  ❌ Opción inválida. Intente de nuevo.", 10, 0
+    msg_opcion_invalida db 10, "  ❌ Opcion invalida. Intente de nuevo.", 10, 0
     msg_despedida db 10, 27, "[1;33m"
-                  db "  ╔════════════════════════════════════╗", 10
-                  db "  ║  ¡Gracias por usar la calculadora! ║", 10
-                  db "  ╚════════════════════════════════════╝", 10
+                  db "      ╔══════════════════════════════════╗", 10
+                  db "      ║                                  ║", 10
+                  db "      ║  Gracias por usar la calculadora ║", 10
+                  db "      ║         Hasta pronto!            ║", 10
+                  db "      ║                                  ║", 10
+                  db "      ╚══════════════════════════════════╝", 10
                   db 27, "[0m", 10, 0
 
 section .bss
@@ -66,7 +84,7 @@ section .text
     
     ; Declarar funciones externas de otros módulos
     extern menu_aritmetico        ; De arithmetic.asm
-    extern menu_logico_main       ; De logical.asm
+    extern menuLogicoMain       ; De logical.asm
     extern menu_conversion        ; De conversion.asm
     extern print_string           ; De utils.asm
     extern strlen                 ; De utils.asm
@@ -109,9 +127,6 @@ mostrar_caratula:
     call print_string
     
     mov rsi, integrantes
-    call print_string
-    
-    mov rsi, presione
     call print_string
     
     pop rbp
@@ -159,7 +174,7 @@ menu_principal_loop:
     jmp .loop
 
 .opcion_logica:
-    call menu_logico_main      ; Llamar módulo externo
+    call menuLogicoMain      ; Llamar módulo externo
     jmp .loop
 
 .opcion_conversion:
