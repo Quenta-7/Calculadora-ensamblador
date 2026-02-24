@@ -9,19 +9,20 @@
 ;   - División con cociente y residuo
 ; ============================================
 
-section .data
+section .data              ; Sección de datos inicializados
+
     ; === SUBMENÚ ARITMÉTICO ===
-    menu_arit db 10, 27, "[1;33m"
+    menu_arit db 10, 27, "[1;33m"   ; Salto de línea + código ANSI color amarillo
               db "      ┌──────────────────────────────┐", 10
               db "      │   OPERACIONES ARITMETICAS    │", 10
               db "      └──────────────────────────────┘", 10
-              db 27, "[0m"
+              db 27, "[0m"          ; Resetear color
               db "       ", 27, "[1;37m", "1.", 27, "[0m", " Suma", 10
               db "       ", 27, "[1;37m", "2.", 27, "[0m", " Resta", 10
               db "       ", 27, "[1;37m", "3.", 27, "[0m", " Multiplicacion", 10
-              db "       ", 27, "[1;37m", "4.", 27, "[0m", " Division", 10
+              db "       ", 27, "[1;31m", "4.", 27, "[0m", " Division", 10
               db "       ", 27, "[1;31m", "5.", 27, "[0m", " Volver al menu principal", 10, 10
-              db "      Opcion: ", 0
+              db "      Opcion: ", 0     ; Texto final del menú terminado en NULL
     
     ; === MENSAJES ===
     msg_num1 db 10, "  Ingrese primer número (00-99): ", 0
@@ -32,48 +33,48 @@ section .data
     msg_div_cero db 10, "  ❌ ERROR: División por cero no permitida!", 10, 0
     msg_invalido db 10, "  ❌ ERROR: Número inválido. Use solo dígitos 0-9.", 10, 0
     msg_opcion_invalida db 10, "  ❌ Opción inválida.", 10, 0
-    newline db 10, 0
+    newline db 10, 0        ; Salto de línea
 
-section .bss
-    num1 resb 4
-    num2 resb 4
-    extern buffer
+section .bss               ; Sección de variables sin inicializar
+    num1 resb 4            ; Reserva 4 bytes para número 1
+    num2 resb 4            ; Reserva 4 bytes para número 2
+    extern buffer          ; Buffer externo (de utils.asm)
 
 section .data
-    clear_scr db 27, "[2J", 27, "[H", 0
+    clear_scr db 27, "[2J", 27, "[H", 0   ; Código ANSI para limpiar pantalla
 
 section .text
-    global menu_aritmetico
+    global menu_aritmetico ; Hace visible esta función a otros módulos
     
     ; Funciones externas de utils.asm
-    extern print_string
-    extern leer_opcion
-    extern pausar
-    extern print_number
-    extern ascii_to_num
+    extern print_string    ; Imprime cadena
+    extern leer_opcion     ; Lee una opción del teclado
+    extern pausar          ; Espera una tecla
+    extern print_number    ; Imprime número en RAX
+    extern ascii_to_num    ; Convierte ASCII a número
 
 ; ============================================
 ; MENÚ ARITMÉTICO
 ; ============================================
 menu_aritmetico:
-    push rbp
-    mov rbp, rsp
+    push rbp               ; Guarda base pointer anterior
+    mov rbp, rsp           ; Establece nuevo stack frame
 
 .loop:
     ; Limpiar pantalla
-    mov rax, 1
-    mov rdi, 1
-    lea rsi, [rel clear_scr]
-    mov rdx, 7
-    syscall
+    mov rax, 1             ; syscall write
+    mov rdi, 1             ; stdout
+    lea rsi, [rel clear_scr] ; Dirección del string limpiar pantalla
+    mov rdx, 7             ; Cantidad de bytes
+    syscall                ; Llamada al sistema
     
-    mov rsi, menu_arit
-    call print_string
+    mov rsi, menu_arit     ; Cargar dirección del menú
+    call print_string      ; Mostrar menú
     
-    call leer_opcion
-    mov al, [buffer]
+    call leer_opcion       ; Leer opción
+    mov al, [buffer]       ; Obtener carácter ingresado
     
-    cmp al, '1'
+    cmp al, '1'            ; ¿Es '1'?
     je .suma
     cmp al, '2'
     je .resta
@@ -84,10 +85,10 @@ menu_aritmetico:
     cmp al, '5'
     je .volver
     
-    mov rsi, msg_opcion_invalida
+    mov rsi, msg_opcion_invalida ; Mensaje error
     call print_string
     call pausar
-    jmp .loop
+    jmp .loop              ; Volver al menú
 
 .suma:
     call operacion_suma
@@ -120,16 +121,16 @@ operacion_suma:
     push rbp
     mov rbp, rsp
     
-    call leer_dos_numeros
-    cmp rax, 0
+    call leer_dos_numeros   ; BL=num1, CL=num2
+    cmp rax, 0              ; ¿Hubo error?
     je .error
     
-    add bl, cl
+    add bl, cl              ; BL = BL + CL
     
     mov rsi, msg_resultado
     call print_string
     
-    movzx rax, bl
+    movzx rax, bl           ; Pasar resultado a RAX
     call print_number
     
     mov rsi, newline
@@ -155,7 +156,7 @@ operacion_resta:
     cmp rax, 0
     je .error
     
-    sub bl, cl
+    sub bl, cl              ; BL = BL - CL
     
     mov rsi, msg_resultado
     call print_string
@@ -186,14 +187,14 @@ operacion_multiplicacion:
     cmp rax, 0
     je .error
     
-    movzx rax, bl
-    movzx rcx, cl
-    mul rcx            ; RDX:RAX = RAX * RCX
+    movzx rax, bl           ; RAX = num1
+    movzx rcx, cl           ; RCX = num2
+    mul rcx                 ; RDX:RAX = RAX * RCX
     
     mov rsi, msg_resultado
     call print_string
     
-    call print_number  ; RAX ya tiene el resultado
+    call print_number       ; RAX ya contiene resultado
     
     mov rsi, newline
     call print_string
@@ -208,7 +209,7 @@ operacion_multiplicacion:
     ret
 
 ; ============================================
-; OPERACIÓN: DIVISIÓN (CORREGIDA 64 BITS)
+; OPERACIÓN: DIVISIÓN (64 BITS)
 ; ============================================
 operacion_division:
     push rbp
@@ -218,19 +219,19 @@ operacion_division:
     cmp rax, 0
     je .error
     
-    cmp cl, 0
+    cmp cl, 0               ; ¿Divisor es 0?
     je .div_cero
     
-    movzx rax, bl
-    movzx rcx, cl
-    xor rdx, rdx
-    div rcx            ; RAX=cociente, RDX=residuo
+    movzx rax, bl           ; Dividendo
+    movzx rcx, cl           ; Divisor
+    xor rdx, rdx            ; Limpiar RDX antes de dividir
+    div rcx                 ; RAX=cociente, RDX=residuo
     
-    push rdx
+    push rdx                ; Guardar residuo
     
     mov rsi, msg_cociente
     call print_string
-    call print_number
+    call print_number       ; Imprime cociente
     
     mov rsi, newline
     call print_string
@@ -238,7 +239,7 @@ operacion_division:
     mov rsi, msg_residuo
     call print_string
     
-    pop rax
+    pop rax                 ; Recuperar residuo
     call print_number
     
     mov rsi, newline
@@ -260,10 +261,6 @@ operacion_division:
 
 ; ============================================
 ; FUNCIÓN AUXILIAR: Leer dos números
-; Retorna:
-;   BL = num1
-;   CL = num2
-;   RAX = 1 si OK, 0 si error
 ; ============================================
 leer_dos_numeros:
     push rbp
@@ -272,17 +269,17 @@ leer_dos_numeros:
     mov rsi, msg_num1
     call print_string
     
-    mov rax, 0
-    mov rdi, 0
-    mov rsi, num1
-    mov rdx, 4
+    mov rax, 0              ; syscall read
+    mov rdi, 0              ; stdin
+    mov rsi, num1           ; buffer destino
+    mov rdx, 4              ; máximo 4 bytes
     syscall
     
     mov rsi, num1
-    call ascii_to_num
-    cmp rax, -1
+    call ascii_to_num       ; Convertir texto a número
+    cmp rax, -1             ; ¿Error?
     je .error
-    mov bl, al
+    mov bl, al              ; Guardar en BL
     
     mov rsi, msg_num2
     call print_string
@@ -297,13 +294,13 @@ leer_dos_numeros:
     call ascii_to_num
     cmp rax, -1
     je .error
-    mov cl, al
+    mov cl, al              ; Guardar en CL
     
-    mov rax, 1
+    mov rax, 1              ; Retornar éxito
     jmp .fin
 
 .error:
-    xor rax, rax
+    xor rax, rax            ; Retornar 0 (error)
 
 .fin:
     pop rbp

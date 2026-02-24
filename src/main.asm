@@ -17,13 +17,13 @@ section .data
              db "*        CALCULADORA EN LENGUAJE ENSAMBLADOR               *",10
 
              db 27,"[1;33m"
-             db "*  Universidad Nacional de San Antonio Abad del Cusco      *",10
-             db "*  Facultad de Ingenieria Electronica, Electrica,          *",10
-             db "*  Informatica y Mecanica                                  *",10
-             db "*  Escuela Profesional de Ingenieria Informatica           *",10
-             db "*  y de Sistemas                                           *",10
+             db "*    Universidad Nacional de San Antonio Abad del Cusco    *",10
+             db "*      Facultad de Ingenieria Electronica, Electrica,      *",10
+             db "*               Informatica y Mecanica                     *",10
+             db "*     Escuela Profesional de Ingenieria Informatica        *",10
+             db "*                   y de Sistemas                          *",10
              db "*                                                          *",10
-             db "*  Organizacion y Arquitectura del Computador              *",10
+             db "*      Organizacion y Arquitectura del Computador          *",10
              
              db 27,"[1;35m"
              db "*                                                          *",10
