@@ -1,6 +1,6 @@
 # Calculadora en Lenguaje Ensamblador x86-64
 
-Calculadora modular en lenguaje ensamblador x86-64 (NASM + Linux syscalls), desarrollada para el curso de **Organización y Arquitectura del Computador** de la Universidad Nacional de San Antonio Abad del Cusco (UNSAAC).
+Calculadora modular en lenguaje ensamblador x86-64 (NASM + Linux syscalls) con frontend web en JavaScript y Tailwind CSS, desarrollada para el curso de **Organización y Arquitectura del Computador** de la Universidad Nacional de San Antonio Abad del Cusco (UNSAAC).
 
 ---
 
@@ -8,19 +8,55 @@ Calculadora modular en lenguaje ensamblador x86-64 (NASM + Linux syscalls), desa
 
 ```
 Calculadora-ensamblador/
-├── src/                        # Código fuente ensamblador
-│   ├── main.asm                # Programa principal (carátula, menú principal)
-│   ├── utils.asm               # Utilidades compartidas (print_string, pausar, leer_opcion, etc.)
-│   ├── arithmetic.asm          # Módulo aritmético: suma, resta, multiplicación, división
-│   ├── logical.asm             # Módulo lógico: AND, OR, NOT
-│   └── conversion.asm          # Módulo de conversión: binario ↔ hexadecimal
-├── build/                      # Archivos objeto (.o) generados por el compilador
-├── scripts/
-│   └── compile.sh              # Script de compilación para Linux/WSL
-├── compilar.bat                # Script para compilar y ejecutar desde Windows (usa WSL)
+├── backend/                    # Backend en ensamblador x86-64
+│   ├── src/                    # Código fuente ensamblador
+│   │   ├── main.asm            # Terminal interactiva (carátula, menú)
+│   │   ├── api.asm             # API para frontend (stdin/stdout)
+│   │   ├── utils.asm           # Utilidades compartidas
+│   │   ├── arithmetic.asm      # Módulo aritmético: suma, resta, multiplicación, división
+│   │   ├── logical.asm         # Módulo lógico: AND, OR, NOT, XOR
+│   │   └── conversion.asm      # Módulo de conversión: binario ↔ hexadecimal
+│   ├── build/                  # Archivos objeto (.o) generados
+│   ├── server.js               # Servidor Node.js (puente frontend ↔ ASM)
+│   └── scripts/
+│       └── compile.sh          # Script de compilación para Linux/WSL
+├── frontend/                   # Frontend web (JavaScript + Tailwind CSS)
+│   ├── index.html              # Punto de entrada (Tailwind CDN + app.js)
+│   └── app.js                  # Calculadora UI que consume el backend ASM
+├── compilar.bat                # Script para compilar backend desde Windows (WSL)
 ├── .gitignore
 └── README.md
 ```
+
+---
+
+## Arquitectura
+
+```
+┌─────────────────────┐     HTTP POST      ┌──────────────────┐     stdin/stdout     ┌─────────────────────┐
+│   Frontend (JS)     │ ──────────────────► │  Servidor Node   │ ──────────────────► │  Backend ASM x86-64 │
+│   Tailwind CSS      │ ◄────── JSON ────── │  (server.js)     │ ◄──── resultado ─── │  (calculadora_api)  │
+│   Calculadora UI    │                     │  Puerto 3000     │                     │  NASM + Linux       │
+└─────────────────────┘                     └──────────────────┘                     └─────────────────────┘
+```
+
+**Todas las operaciones aritméticas, lógicas y de conversión se ejecutan en ensamblador x86-64.**
+El frontend JS solo muestra la interfaz y envía peticiones al servidor, que invoca el binario ASM.
+
+---
+
+## Frontend Web
+
+El frontend es una calculadora que **consume el backend ASM** a través del servidor Node.js:
+
+1. Compilar el backend: `compilar.bat` o `wsl bash backend/scripts/compile.sh`
+2. Iniciar servidor: `node backend/server.js`
+3. Abrir en navegador: `http://localhost:3000`
+
+**Operaciones disponibles:**
+- **Aritméticas:** Suma, Resta, Multiplicación, División (instrucciones ADD, SUB, MUL, DIV)
+- **Lógicas:** AND, OR, NOT, XOR (instrucciones AND, OR, NOT, XOR sobre 4 bits)
+- **Conversión:** Binario 8 bits ↔ Hexadecimal (instrucciones SHR, SHL, AND, OR)
 
 ---
 

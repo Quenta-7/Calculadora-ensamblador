@@ -1,8 +1,13 @@
 # Archivos compilados
 *.o
 *.out
-calculadora
-build/*.o
+*.so
+backend/calculadora
+backend/calculadora_api
+backend/build/
+
+# Node.js
+node_modules/
 
 # Archivos temporales
 *~
