@@ -8,7 +8,7 @@ echo  ========================================
 echo.
 
 :: Corregir finales de linea y compilar
-wsl sh -c "cd /mnt/host/d/github/Calculadora-ensamblador && sed -i 's/\r$//' scripts/compile.sh && chmod +x scripts/compile.sh && sh scripts/compile.sh"
+wsl sh -c "cd /mnt/host/d/github/Calculadora-ensamblador && sed -i 's/\r$//' backend/scripts/compile.sh && chmod +x backend/scripts/compile.sh && sh backend/scripts/compile.sh"
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
@@ -23,7 +23,7 @@ echo  ----------------------------------------
 echo.
 
 :: Ejecutar la calculadora
-wsl sh -c "cd /mnt/host/d/github/Calculadora-ensamblador && ./calculadora"
+wsl sh -c "cd /mnt/host/d/github/Calculadora-ensamblador && ./backend/calculadora"
 
 echo.
 pause

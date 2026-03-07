@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora ASM x86-64</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="calculator">
+        <div class="calculator-header">
+            <h1>Calculadora</h1>
+            <small>Backend: Ensamblador x86-64 (NASM)</small>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="arithmetic">Aritmética</button>
+            <button class="tab" data-tab="logical">Lógica</button>
+            <button class="tab" data-tab="conversion">Conversión</button>
+        </div>
+
+        <div class="display">
+            <div class="display-expr" id="display-expr"></div>
+            <div class="display-result" id="display-result">0</div>
+        </div>
+
+        <div class="panel active" id="panel-arithmetic"></div>
+        <div class="panel" id="panel-logical"></div>
+        <div class="panel" id="panel-conversion"></div>
+
+        <div class="status" id="status"></div>
+    </div>
+
+    <!-- Módulos JS separados -->
+    <script src="api.js"></script>
+    <script src="arithmetic.js"></script>
+    <script src="logical.js"></script>
+    <script src="conversion.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
