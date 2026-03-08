@@ -32,7 +32,7 @@ except OSError:
 class CalculadoraEnsamblador:
     def __init__(self, root):
         self.root = root
-        self.root.title("Calculadora UNSAAC - Backend Ensamblador")
+        self.root.title("Calculadora - Backend Ensamblador")
         self.root.geometry("380x720")
         self.root.configure(bg="#f5f5f5")
 
